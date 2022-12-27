@@ -1,7 +1,9 @@
 # Shopping Cart
 
-@Builder - to build an object 
+@Builder - to build an object
+ 
 @RequiredArgsConstructor - from lombok, at compile time it creates the constructor with all the required arguments
+
 @Slf4j - from lombok, to add logs
 
 ```
