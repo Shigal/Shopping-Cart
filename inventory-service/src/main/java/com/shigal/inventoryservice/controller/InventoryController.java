@@ -6,6 +6,7 @@ package com.shigal.inventoryservice.controller;/*
 
 import com.shigal.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InventoryController {
 
+    @Autowired
     private final InventoryService inventoryService;
 
     @GetMapping("/{sku-code}")
