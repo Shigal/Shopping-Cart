@@ -1,5 +1,28 @@
 # Shopping Cart
 
+
+## Sample Requests: Order Service
+
+POST    localhost:8282/api/order
+
+Body    
+
+```
+
+{
+"orderLineItemsDtos": [
+{
+"skuCode": "samsung_22",
+"price": 120000,
+"quantity": 1
+}
+]
+}
+
+```
+
+#
+
 @Builder - to build an object
  
 @RequiredArgsConstructor - from lombok, at compile time it creates the constructor with all the required arguments
@@ -122,3 +145,62 @@ private ProductRequest getProductRequest() {
 
 - since the content accepts String argument we use ObjectMapper to convert Json into POJO and get its String valueOf
 - Also we check if the object is created in the database or not with Assertions
+
+#
+In Inventory Service, we are introduces to an annotation @Transactional(readOnly = true)
+
+```
+
+ @Override
+    @Transactional(readOnly = true)
+    public boolean isInStock(String skuCode) {
+        return inventoryRepository.finBySkuCode(skuCode).isEmpty();
+    }
+    
+```
+- we use @Transactional(readOnly = true) for search or retrieval operation to make sure we can only perform the read-only operation
+- if we annotate @Transactional a class (eg: OrderServiceImpl), springframework will automatically create and commit the transaction
+
+
+- we need to add data to inventory database, from Application class
+- so that it will load the data at the time of application startup
+
+```
+
+@Bean
+	public CommandLineRunner loadData(InventoryRepository inventoryRepository) {
+		return args -> {
+			Inventory inventory = new Inventory();
+			inventory.setSkuCode("vivo_17_black");
+			inventory.setQuantity(120);
+
+			Inventory inventory1 = new Inventory();
+			inventory1.setSkuCode("vivo_19_blue");
+			inventory1.setQuantity(80);
+
+			Inventory inventory2 = new Inventory();
+			inventory2.setSkuCode("vivo_19_white");
+			inventory2.setQuantity(0);
+			
+			inventoryRepository.save(inventory);
+			inventoryRepository.save(inventory1);
+			inventoryRepository.save(inventory2);
+		};
+	}
+
+```
+#
+
+Note:
+
+Spring Data JPA generate queries based on name of property in your Entity class ,
+If entity based custom methods defined in repository interfaces also generate queries internally based on method name.
+
+#
+
+## Synchronous and Asynchronous Communication
+
+- Order-service sends the request and wait for the response from inventory-service called synchronous
+- Order-service sends the request and does not wait for the response: fire and fly called Asynchronous
+- Synchronous comm can be done through Http client eg: RestTemplate by spring boot, WebClient by Spring web flux
+- web client also supports async
